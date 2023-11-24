@@ -1,43 +1,19 @@
 #!/usr/bin/env node
 import minimist from "minimist";
 
-const HEADER_WIDTH = 14;
-const DAY_WIDTH = 2;
-const BLANK_DAY = " ".repeat(3);
-const FIRST_DAY_OF_MONTH = 1;
-
-const today = new Date();
-const currentYear = today.getFullYear();
-const currentMonth = today.getMonth() + 1;
-
-const parseOptions = minimist(process.argv.slice(2), {
-  string: ["-y", "-m"],
-  alias: {
-    y: "year",
-    m: "month",
-  },
-  default: {
-    y: currentYear,
-    m: currentMonth,
-  },
-});
-
-const year = parseOptions.year;
-const month = parseOptions.month;
-
-const getFirstDateOfMonth = () => {
+const getFirstDateOfMonth = (year, month) => {
   return new Date(year, month - 1, 1);
 };
 
-const getLastDateOfMonth = () => {
+const getLastDateOfMonth = (year, month) => {
   return new Date(year, month, 0);
 };
 
-const generateCalendarHeader = () => {
-  const monthName = getFirstDateOfMonth().toLocaleString("en-US", {
+const generateCalendarHeader = (year, month) => {
+  const monthName = getFirstDateOfMonth(year, month).toLocaleString("en-US", {
     month: "short",
   });
-  return `${monthName} ${year}`.padStart(HEADER_WIDTH, " ");
+  return `${monthName} ${year}`.padStart(14, " ");
 };
 
 const generateWeekHeader = () => {
@@ -45,37 +21,55 @@ const generateWeekHeader = () => {
 };
 
 const generateDayFormat = (day) => {
-  const dayString = day.toString().padStart(DAY_WIDTH, " ");
+  const dayString = day.toString().padStart(2, " ");
   return dayString + " ";
 };
 
-const generateBlankDays = () => {
-  return BLANK_DAY.repeat(getFirstDateOfMonth().getDay());
+const generateBlankDays = (year, month) => {
+  return "   ".repeat(getFirstDateOfMonth(year, month).getDay());
 };
 
 const isSaturday = (year, month, day) => {
   return new Date(year, month - 1, day).getDay() === 6;
 };
 
-const generateMonthDates = () => {
-  const dayInMonth = getLastDateOfMonth().getDate();
-  const monthDates = [];
-  monthDates.push(generateBlankDays());
+const generateMonthDates = (year, month) => {
+  const dayInMonth = getLastDateOfMonth(year, month).getDate();
+  let monthDates = generateBlankDays(year, month);
 
-  for (let day = FIRST_DAY_OF_MONTH; day <= dayInMonth; day++) {
-    monthDates.push(generateDayFormat(day));
+  for (let day = 1; day <= dayInMonth; day++) {
+    monthDates += generateDayFormat(day);
     if (isSaturday(year, month, day)) {
-      monthDates.push("\n");
+      monthDates += "\n";
     }
   }
-  return monthDates.join("");
+  return monthDates;
 };
 
 const run = () => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+
+  const parseOptions = minimist(process.argv.slice(2), {
+    string: ["-y", "-m"],
+    alias: {
+      y: "year",
+      m: "month",
+    },
+    default: {
+      y: currentYear,
+      m: currentMonth,
+    },
+  });
+
+  const year = parseOptions.year;
+  const month = parseOptions.month;
+
   return [
-    generateCalendarHeader(),
+    generateCalendarHeader(year, month),
     generateWeekHeader(),
-    generateMonthDates(),
+    generateMonthDates(year, month),
   ].join("\n");
 };
 
