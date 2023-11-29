@@ -26,7 +26,7 @@ const run = () => {
   return [
     generateCalendarHeader(year, month),
     generateWeekHeader(),
-    generateMonthDates(year, month),
+    ...generateMonthDates(year, month),
   ].join("\n");
 };
 
@@ -47,15 +47,18 @@ const generateWeekHeader = () => {
 
 const generateMonthDates = (year, month) => {
   const dayInMonth = getLastDateOfMonth(year, month).getDate();
-  let monthDates = generateBlankDays(year, month);
+  const weeks = [];
+  let monthDates = "";
+  monthDates += generateBlankDays(year, month);
 
   for (let day = 1; day <= dayInMonth; day++) {
     monthDates += generateDayFormat(day);
-    if (isSaturday(year, month, day)) {
-      monthDates += "\n";
+    if (isSaturday(year, month, day) || day == dayInMonth) {
+      weeks.push(monthDates);
+      monthDates = "";
     }
   }
-  return monthDates;
+  return weeks;
 };
 
 const getLastDateOfMonth = (year, month) => {
