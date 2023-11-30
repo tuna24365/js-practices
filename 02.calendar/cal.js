@@ -25,7 +25,7 @@ const run = () => {
 
   return [
     generateCalendarHeader(year, month),
-    generateWeekHeader(),
+    "Su Mo Tu We Th Fr Sa",
     ...generateMonthDates(year, month),
   ].join("\n");
 };
@@ -41,19 +41,16 @@ const getFirstDateOfMonth = (year, month) => {
   return new Date(year, month - 1, 1);
 };
 
-const generateWeekHeader = () => {
-  return "Su Mo Tu We Th Fr Sa";
-};
-
 const generateMonthDates = (year, month) => {
-  const dayInMonth = getLastDateOfMonth(year, month).getDate();
+  const lastDay = getLastDayOfMonth(year, month);
   const weeks = [];
   let monthDates = "";
   monthDates += generateBlankDays(year, month);
 
-  for (let day = 1; day <= dayInMonth; day++) {
+  for (let day = 1; day <= lastDay; day++) {
     monthDates += generateDayFormat(day);
-    if (isSaturday(year, month, day) || day == dayInMonth) {
+    if (isSaturday(year, month, day) || day === lastDay) {
+      monthDates = monthDates.trimEnd();
       weeks.push(monthDates);
       monthDates = "";
     }
@@ -61,8 +58,8 @@ const generateMonthDates = (year, month) => {
   return weeks;
 };
 
-const getLastDateOfMonth = (year, month) => {
-  return new Date(year, month, 0);
+const getLastDayOfMonth = (year, month) => {
+  return new Date(year, month, 0).getDate();
 };
 
 const generateBlankDays = (year, month) => {
