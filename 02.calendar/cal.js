@@ -50,9 +50,10 @@ const generateMonthDates = (year, month) => {
   for (let day = 1; day <= lastDay; day++) {
     monthDates += generateDayFormat(day);
     if (isSaturday(year, month, day) || day === lastDay) {
-      monthDates = monthDates.trimEnd();
       weeks.push(monthDates);
       monthDates = "";
+    } else {
+      monthDates += " ";
     }
   }
   return weeks;
@@ -67,8 +68,7 @@ const generateBlankDays = (year, month) => {
 };
 
 const generateDayFormat = (day) => {
-  const dayString = day.toString().padStart(2, " ");
-  return dayString + " ";
+  return day.toString().padStart(2, " ");
 };
 
 const isSaturday = (year, month, day) => {
