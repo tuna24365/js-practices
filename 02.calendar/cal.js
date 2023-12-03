@@ -34,7 +34,7 @@ const generateCalendarHeader = (year, month) => {
   const monthName = getFirstDateOfMonth(year, month).toLocaleString("en-US", {
     month: "short",
   });
-  return `${monthName} ${year}`.padStart(HEADER_WIDTH, " ");
+  return `${monthName} ${year}`.padStart(HEADER_WIDTH);
 };
 
 const getFirstDateOfMonth = (year, month) => {
@@ -68,7 +68,7 @@ const generateBlankDays = (year, month) => {
 };
 
 const generateDayFormat = (day) => {
-  return day.toString().padStart(2, " ");
+  return day.toString().padStart(2);
 };
 
 const isSaturday = (year, month, day) => {
